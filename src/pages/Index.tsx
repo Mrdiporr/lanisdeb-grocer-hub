@@ -71,11 +71,12 @@ export default function Index() {
           <div className="hidden md:flex items-center gap-6 text-sm">
             <a href="#categories" className="hover:underline">Categories</a>
             <a href="#featured" className="hover:underline">Featured</a>
+            <a href="/shop" className="hover:underline">Shop</a>
             <a href="/admin" className="hover:underline">Admin</a>
           </div>
           <div className="flex gap-3">
             <Button variant="outline">Sign in</Button>
-            <Button variant="hero">Shop now</Button>
+            <Button variant="hero" asChild><a href="/shop">Shop now</a></Button>
           </div>
         </nav>
       </header>
@@ -102,8 +103,8 @@ export default function Index() {
               </h1>
               <p className="text-lg max-w-prose text-[#f7edef] font-extrabold text-center"> The Taste of Home, Near and Far!</p>
               <div className="flex gap-3">
-                <Button variant="hero">Browse products</Button>
-                <Button variant="premium">View categories</Button>
+                <Button variant="hero" asChild><a href="/shop">Browse products</a></Button>
+                <Button variant="premium" asChild><a href="/shop">View categories</a></Button>
               </div>
               
             </div>
