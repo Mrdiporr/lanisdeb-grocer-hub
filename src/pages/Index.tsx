@@ -3,24 +3,48 @@ import heroImage from "@/assets/hero-grocery.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
-
-const categories = [
-  { id: "produce", name: "Fresh Produce", blurb: "Plantains, yams, okra, peppers and more" },
-  { id: "pantry", name: "Pantry Staples", blurb: "Fufu, garri, spices, sauces" },
-  { id: "frozen", name: "Frozen", blurb: "Seafood, vegetables, specialty items" },
-  { id: "beverages", name: "Beverages", blurb: "Malta, tropical juices, herbal drinks" },
-];
-
-const featured = [
-  { id: 1, name: "Yellow Plantain (each)", price: 1.29 },
-  { id: 2, name: "Egusi Seeds 500g", price: 8.5 },
-  { id: 3, name: "Jollof Rice Spice Mix", price: 4.99 },
-  { id: 4, name: "Scotch Bonnet Peppers", price: 3.5 },
-];
-
+const categories = [{
+  id: "produce",
+  name: "Fresh Produce",
+  blurb: "Plantains, yams, okra, peppers and more"
+}, {
+  id: "pantry",
+  name: "Pantry Staples",
+  blurb: "Fufu, garri, spices, sauces"
+}, {
+  id: "frozen",
+  name: "Frozen",
+  blurb: "Seafood, vegetables, specialty items"
+}, {
+  id: "beverages",
+  name: "Beverages",
+  blurb: "Malta, tropical juices, herbal drinks"
+}];
+const featured = [{
+  id: 1,
+  name: "Yellow Plantain (each)",
+  price: 1.29
+}, {
+  id: 2,
+  name: "Egusi Seeds 500g",
+  price: 8.5
+}, {
+  id: 3,
+  name: "Jollof Rice Spice Mix",
+  price: 4.99
+}, {
+  id: 4,
+  name: "Scotch Bonnet Peppers",
+  price: 3.5
+}];
 export default function Index() {
-  const [spot, setSpot] = useState<{x:number;y:number}>({x:50,y:50});
-
+  const [spot, setSpot] = useState<{
+    x: number;
+    y: number;
+  }>({
+    x: 50,
+    y: 50
+  });
   const jsonLd = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "GroceryStore",
@@ -32,18 +56,11 @@ export default function Index() {
       streetAddress: "Brooklyn, NY",
       addressLocality: "Brooklyn",
       addressRegion: "NY",
-      addressCountry: "US",
+      addressCountry: "US"
     }
   }), []);
-
-  return (
-    <div className="min-h-screen">
-      <SEO
-        title="Lanisdeb African & Caribbean Market | Brooklyn Grocery"
-        description="Shop authentic African & Caribbean groceries in Brooklyn. Fresh produce, pantry staples, and more."
-        canonical="https://lanisdebmarket.com/"
-        jsonLd={jsonLd}
-      />
+  return <div className="min-h-screen">
+      <SEO title="Lanisdeb African & Caribbean Market | Brooklyn Grocery" description="Shop authentic African & Caribbean groceries in Brooklyn. Fresh produce, pantry staples, and more." canonical="https://lanisdebmarket.com/" jsonLd={jsonLd} />
 
       <header className="border-b">
         <nav className="container mx-auto flex items-center justify-between py-5">
@@ -63,35 +80,32 @@ export default function Index() {
         </nav>
       </header>
 
-      <section
-        onMouseMove={(e) => {
-          const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-          setSpot({ x, y });
-        }}
-        className="relative overflow-hidden"
-      >
+      <section onMouseMove={e => {
+      const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width * 100;
+      const y = (e.clientY - rect.top) / rect.height * 100;
+      setSpot({
+        x,
+        y
+      });
+    }} className="relative overflow-hidden">
         <div className="absolute inset-0 bg-hero-gradient opacity-80" />
         <img src={heroImage} alt="Fresh African & Caribbean produce at Lanisdeb Market" className="absolute inset-0 h-full w-full object-cover" loading="eager" />
-        <div
-          className="absolute inset-0"
-          style={{ background: `radial-gradient(600px at ${spot.x}% ${spot.y}%, hsl(var(--accent)/0.25), transparent 60%)` }}
-        />
+        <div className="absolute inset-0" style={{
+        background: `radial-gradient(600px at ${spot.x}% ${spot.y}%, hsl(var(--accent)/0.25), transparent 60%)`
+      }} />
         <div className="relative">
           <div className="container mx-auto py-24 md:py-32 grid md:grid-cols-2 gap-10 items-center">
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl font-bold leading-tight text-[#fb07fb]/15 md:text-[_#f7edef]">
                 Brooklyn's Home for African & Caribbean Groceries
               </h1>
-              <p className="text-lg text-muted-foreground max-w-prose">
-                From plantains to palm oil, we bring the flavors of home to your table. Shop online or visit us in-store.
-              </p>
+              <p className="text-lg max-w-prose text-[#f7edef] font-extrabold text-center"> The Taste of Home, Near and Far!</p>
               <div className="flex gap-3">
                 <Button variant="hero">Browse products</Button>
                 <Button variant="premium">View categories</Button>
               </div>
-              <p className="text-xs text-muted-foreground">Fast local pickup • Fresh selection • Friendly service</p>
+              
             </div>
           </div>
         </div>
@@ -104,15 +118,13 @@ export default function Index() {
             <p className="text-muted-foreground">Curated essentials from Africa and the Caribbean</p>
           </div>
           <div className="grid gap-5 md:grid-cols-4">
-            {categories.map((c) => (
-              <Card key={c.id} className="shadow-elevate hover:shadow-glow transition-shadow">
+            {categories.map(c => <Card key={c.id} className="shadow-elevate hover:shadow-glow transition-shadow">
                 <CardContent className="p-5">
                   <div className="h-36 rounded-md bg-gradient-to-br from-[hsl(var(--primary)/0.12)] to-[hsl(var(--accent)/0.12)] mb-4" />
                   <h3 className="font-medium">{c.name}</h3>
                   <p className="text-sm text-muted-foreground">{c.blurb}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </section>
 
@@ -126,8 +138,7 @@ export default function Index() {
               <Button variant="outline">See all</Button>
             </div>
             <div className="grid gap-5 md:grid-cols-4">
-              {featured.map((p) => (
-                <Card key={p.id} className="group">
+              {featured.map(p => <Card key={p.id} className="group">
                   <CardContent className="p-5">
                     <div className="aspect-square w-full rounded-md bg-gradient-to-br from-[hsl(var(--primary)/0.08)] to-[hsl(var(--accent)/0.08)] mb-4" />
                     <h3 className="font-medium group-hover:underline">{p.name}</h3>
@@ -136,8 +147,7 @@ export default function Index() {
                       <Button size="sm">Add to cart</Button>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </section>
@@ -153,6 +163,5 @@ export default function Index() {
           </nav>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
