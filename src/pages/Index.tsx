@@ -109,7 +109,29 @@ export default function Index() {
             </div>
           </div>
         </div>
-      </section>
+        </section>
+
+        {/* Featured Promotions Section */}
+        <section className="py-16 bg-gradient-to-r from-primary/5 to-secondary/5">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
+                Featured Promotions
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                Discover our authentic African & Caribbean products and special offers
+              </p>
+            </div>
+            <div className="max-w-4xl mx-auto">
+              <img 
+                src="/lovable-uploads/717534ce-9778-4308-82c7-1cd76d19629c.png" 
+                alt="Lanisdeb African & Caribbean Market promotional flyer featuring authentic fabrics, jewelry, spices, and special offers" 
+                className="w-full rounded-2xl shadow-2xl hover:shadow-glow transition-all duration-300 hover:scale-[1.02]"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </section>
 
       <main>
         <section id="categories" className="container mx-auto py-14">
