@@ -1,8 +1,12 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
 import heroImage from "@/assets/hero-grocery.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
 const categories = [{
   id: "produce",
   name: "Fresh Produce",
@@ -38,6 +42,9 @@ const featured = [{
   price: 3.5
 }];
 export default function Index() {
+  const navigate = useNavigate();
+  const { addItem, state } = useCart();
+  const { toast } = useToast();
   const [spot, setSpot] = useState<{
     x: number;
     y: number;
@@ -72,10 +79,16 @@ export default function Index() {
             <a href="#categories" className="hover:underline">Categories</a>
             <a href="#featured" className="hover:underline">Featured</a>
             <a href="/shop" className="hover:underline">Shop</a>
+            <button onClick={() => navigate('/cart')} className="hover:underline">
+              Cart ({state.itemCount})
+            </button>
             <a href="/admin" className="hover:underline">Admin</a>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline">Sign in</Button>
+            <Button variant="outline" onClick={() => navigate('/cart')}>
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Cart ({state.itemCount})
+            </Button>
             <Button variant="hero" asChild><a href="/shop">Shop now</a></Button>
           </div>
         </nav>
@@ -144,8 +157,32 @@ export default function Index() {
                     <div className="aspect-square w-full rounded-md bg-gradient-to-br from-[hsl(var(--primary)/0.08)] to-[hsl(var(--accent)/0.08)] mb-4" />
                     <h3 className="font-medium group-hover:underline">{p.name}</h3>
                     <p className="text-sm text-muted-foreground">${p.price.toFixed(2)}</p>
-                    <div className="pt-3">
-                      <Button size="sm">Add to cart</Button>
+                    <div className="pt-3 flex gap-2">
+                      <Button 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => {
+                          addItem({
+                            id: p.id.toString(),
+                            name: p.name,
+                            price: p.price
+                          });
+                          toast({
+                            title: "Added to cart",
+                            description: `${p.name} added to your cart`
+                          });
+                        }}
+                      >
+                        <ShoppingCart className="h-3 w-3 mr-1" />
+                        Add to cart
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate('/shop')}
+                      >
+                        View
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>)}

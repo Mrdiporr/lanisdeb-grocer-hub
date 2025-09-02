@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { Search, Filter, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Filter, X, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { SEO } from "@/components/SEO";
+import { useCart } from "@/contexts/CartContext";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { mockCategories, mockProducts } from "@/lib/mockData";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: string;
@@ -28,6 +31,9 @@ interface Category {
 }
 
 export default function Shop() {
+  const navigate = useNavigate();
+  const { addItem, state } = useCart();
+  const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -81,6 +87,30 @@ export default function Shop() {
     const matchesCategory = selectedCategory === "all" || product.category_id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const handleAddToCart = (product: Product) => {
+    if (product.stock_quantity === 0) {
+      toast({
+        title: "Out of stock",
+        description: "This item is currently out of stock",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image_url: product.image_url,
+      stock_quantity: product.stock_quantity
+    });
+
+    toast({
+      title: "Added to cart",
+      description: `${product.name} added to your cart`
+    });
+  };
 
   const AppSidebar = () => (
     <Sidebar className="border-r">
@@ -170,7 +200,9 @@ export default function Shop() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">Cart (0)</Button>
+              <Button variant="outline" size="sm" onClick={() => navigate('/cart')}>
+                Cart ({state.itemCount})
+              </Button>
               <Button variant="hero" size="sm">Sign In</Button>
             </div>
           </div>
@@ -229,7 +261,10 @@ export default function Shop() {
                 {filteredProducts.map((product) => (
                   <Card key={product.id} className="group hover:shadow-elevate transition-all duration-300">
                     <CardContent className="p-4">
-                      <div className="aspect-square w-full rounded-md bg-gradient-to-br from-primary/10 to-accent/10 mb-4 overflow-hidden">
+                      <div 
+                        className="aspect-square w-full rounded-md bg-gradient-to-br from-primary/10 to-accent/10 mb-4 overflow-hidden cursor-pointer"
+                        onClick={() => navigate(`/product/${product.id}`)}
+                      >
                         {product.image_url ? (
                           <img 
                             src={product.image_url} 
@@ -244,7 +279,10 @@ export default function Shop() {
                       </div>
                       
                       <div className="space-y-2">
-                        <h3 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
+                        <h3 
+                          className="font-medium group-hover:text-primary transition-colors line-clamp-2 cursor-pointer"
+                          onClick={() => navigate(`/product/${product.id}`)}
+                        >
                           {product.name}
                         </h3>
                         
@@ -265,13 +303,24 @@ export default function Shop() {
                           )}
                         </div>
                         
-                        <Button 
-                          className="w-full" 
-                          size="sm"
-                          disabled={product.stock_quantity === 0}
-                        >
-                          {product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button 
+                            className="flex-1" 
+                            size="sm"
+                            disabled={product.stock_quantity === 0}
+                            onClick={() => handleAddToCart(product)}
+                          >
+                            <ShoppingCart className="h-4 w-4 mr-1" />
+                            {product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate(`/product/${product.id}`)}
+                          >
+                            View
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
