@@ -41,6 +41,9 @@ export default function AdminEnhanced() {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<any>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -330,6 +333,113 @@ export default function AdminEnhanced() {
     }
   };
 
+  const startEditProduct = (product: Product) => {
+    setEditingProduct(product.id);
+    setEditForm({
+      name: product.name,
+      price: product.price.toString(),
+      description: product.description || "",
+      sku: product.sku || "",
+      stock_quantity: product.stock_quantity?.toString() || ""
+    });
+  };
+
+  const saveProductEdit = async (productId: string) => {
+    if (!isSupabaseConfigured()) {
+      toast({
+        title: "Demo Mode",
+        description: "Connect Supabase to save changes",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({
+          name: editForm.name,
+          price: parseFloat(editForm.price),
+          description: editForm.description || null,
+          sku: editForm.sku || null,
+          stock_quantity: editForm.stock_quantity ? parseInt(editForm.stock_quantity) : null
+        })
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      setProducts(prev => prev.map(p => 
+        p.id === productId ? { 
+          ...p, 
+          name: editForm.name,
+          price: parseFloat(editForm.price),
+          description: editForm.description,
+          sku: editForm.sku,
+          stock_quantity: editForm.stock_quantity ? parseInt(editForm.stock_quantity) : 0
+        } : p
+      ));
+      
+      setEditingProduct(null);
+      setEditForm({});
+      
+      toast({
+        title: "Success",
+        description: "Product updated successfully"
+      });
+    } catch (error) {
+      console.error('Error updating product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update product",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const startEditCategory = (category: Category) => {
+    setEditingCategory(category.id);
+    setEditForm({ name: category.name });
+  };
+
+  const saveCategoryEdit = async (categoryId: string) => {
+    if (!isSupabaseConfigured()) {
+      toast({
+        title: "Demo Mode",
+        description: "Connect Supabase to save changes",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('categories')
+        .update({ name: editForm.name })
+        .eq('id', categoryId);
+
+      if (error) throw error;
+
+      setCategories(prev => prev.map(c => 
+        c.id === categoryId ? { ...c, name: editForm.name } : c
+      ));
+      
+      setEditingCategory(null);
+      setEditForm({});
+      
+      toast({
+        title: "Success",
+        description: "Category updated successfully"
+      });
+    } catch (error) {
+      console.error('Error updating category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update category",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <SEO 
@@ -401,49 +511,105 @@ export default function AdminEnhanced() {
               <CardContent>
                 <div className="space-y-4">
                   {products.map((product) => (
-                    <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        {product.image_url && (
-                          <img 
-                            src={product.image_url} 
-                            alt={product.name}
-                            className="w-16 h-16 object-cover rounded-md"
-                          />
-                        )}
-                        <div>
-                          <h3 className="font-medium">{product.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            ${product.price.toFixed(2)} • {product.category?.name}
-                          </p>
-                          <div className="flex gap-2 mt-1">
-                            <Badge variant={product.is_active ? "default" : "secondary"}>
-                              {product.is_active ? "Active" : "Inactive"}
-                            </Badge>
-                            {product.stock_quantity === 0 && (
-                              <Badge variant="destructive">Out of Stock</Badge>
-                            )}
+                    <div key={product.id} className="p-4 border rounded-lg">
+                      {editingProduct === product.id ? (
+                        <div className="space-y-4">
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <div>
+                              <label className="text-sm font-medium">Name</label>
+                              <Input
+                                value={editForm.name}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">Price</label>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={editForm.price}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, price: e.target.value }))}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">SKU</label>
+                              <Input
+                                value={editForm.sku}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, sku: e.target.value }))}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">Stock</label>
+                              <Input
+                                type="number"
+                                value={editForm.stock_quantity}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, stock_quantity: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium">Description</label>
+                            <Textarea
+                              value={editForm.description}
+                              onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                              rows={2}
+                            />
+                          </div>
+                          <div className="flex gap-2 justify-end">
+                            <Button variant="outline" size="sm" onClick={() => setEditingProduct(null)}>
+                              Cancel
+                            </Button>
+                            <Button size="sm" onClick={() => saveProductEdit(product.id)}>
+                              Save
+                            </Button>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleProductStatus(product.id, product.is_active)}
-                        >
-                          {product.is_active ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          size="sm"
-                          onClick={() => deleteProduct(product.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            {product.image_url && (
+                              <img 
+                                src={product.image_url} 
+                                alt={product.name}
+                                className="w-16 h-16 object-cover rounded-md"
+                              />
+                            )}
+                            <div>
+                              <h3 className="font-medium">{product.name}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                ${product.price.toFixed(2)} • {product.category?.name}
+                              </p>
+                              <div className="flex gap-2 mt-1">
+                                <Badge variant={product.is_active ? "default" : "secondary"}>
+                                  {product.is_active ? "Active" : "Inactive"}
+                                </Badge>
+                                {product.stock_quantity === 0 && (
+                                  <Badge variant="destructive">Out of Stock</Badge>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => toggleProductStatus(product.id, product.is_active)}
+                            >
+                              {product.is_active ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => startEditProduct(product)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => deleteProduct(product.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -582,26 +748,44 @@ export default function AdminEnhanced() {
                   {categories.map((category) => {
                     const productCount = products.filter(p => p.category_id === category.id).length;
                     return (
-                      <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div>
-                          <span className="font-medium">{category.name}</span>
-                          <span className="text-sm text-muted-foreground ml-2">
-                            ({productCount} products)
-                          </span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="destructive" 
-                            size="sm"
-                            onClick={() => deleteCategory(category.id)}
-                            disabled={productCount > 0}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                      <div key={category.id} className="p-3 border rounded-lg">
+                        {editingCategory === category.id ? (
+                          <div className="flex gap-2 items-center">
+                            <Input
+                              value={editForm.name}
+                              onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                              className="flex-1"
+                            />
+                            <Button variant="outline" size="sm" onClick={() => setEditingCategory(null)}>
+                              Cancel
+                            </Button>
+                            <Button size="sm" onClick={() => saveCategoryEdit(category.id)}>
+                              Save
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <span className="font-medium">{category.name}</span>
+                              <span className="text-sm text-muted-foreground ml-2">
+                                ({productCount} products)
+                              </span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" onClick={() => startEditCategory(category)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                size="sm"
+                                onClick={() => deleteCategory(category.id)}
+                                disabled={productCount > 0}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
