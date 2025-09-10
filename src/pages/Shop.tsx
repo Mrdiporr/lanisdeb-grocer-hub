@@ -11,6 +11,7 @@ import { useCart } from "@/contexts/CartContext";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { mockCategories, mockProducts } from "@/lib/mockData";
 import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/Header";
 
 interface Product {
   id: string;
@@ -162,51 +163,7 @@ export default function Shop() {
           canonical="https://lanisdebmarket.com/shop" 
         />
         
-        {/* Header */}
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-          <div className="container mx-auto flex items-center justify-between py-4">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="lg:hidden" />
-              <a href="/" className="flex items-center gap-3">
-                <img 
-                  src="/lovable-uploads/78d15118-e2f7-4ec1-92df-3aabde77ded8.png" 
-                  alt="Lanisdeb Market" 
-                  className="h-8 w-auto" 
-                />
-                <span className="font-semibold hidden sm:block">Lanisdeb Market</span>
-              </a>
-            </div>
-            
-            <div className="flex-1 max-w-md mx-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-10"
-                />
-                {searchQuery && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
-                    onClick={() => setSearchQuery("")}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate('/cart')}>
-                Cart ({state.itemCount})
-              </Button>
-              <Button variant="hero" size="sm">Sign In</Button>
-            </div>
-          </div>
-        </header>
+        <Header />
 
         <div className="flex">
           <AppSidebar />

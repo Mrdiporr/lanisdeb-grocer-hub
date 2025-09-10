@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/Header";
 const categories = [{
   id: "produce",
   name: "Fresh Produce",
@@ -68,31 +69,7 @@ export default function Index() {
   }), []);
   return <div className="min-h-screen">
       <SEO title="Lanisdeb African & Caribbean Market | Brooklyn Grocery" description="Shop authentic African & Caribbean groceries in Brooklyn. Fresh produce, pantry staples, and more." canonical="https://lanisdebmarket.com/" jsonLd={jsonLd} />
-
-      <header className="border-b">
-        <nav className="container mx-auto flex items-center justify-between py-5">
-          <a href="#" className="flex items-center gap-3">
-            <img src="/lovable-uploads/78d15118-e2f7-4ec1-92df-3aabde77ded8.png" alt="Lanisdeb African & Caribbean Market logo" className="h-9 w-auto animate-float" />
-            <span className="font-semibold">Lanisdeb Market</span>
-          </a>
-          <div className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#categories" className="hover:underline">Categories</a>
-            <a href="#featured" className="hover:underline">Featured</a>
-            <a href="/shop" className="hover:underline">Shop</a>
-            <button onClick={() => navigate('/cart')} className="hover:underline">
-              Cart ({state.itemCount})
-            </button>
-            <a href="/admin" className="hover:underline">Admin</a>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => navigate('/cart')}>
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart ({state.itemCount})
-            </Button>
-            <Button variant="hero" asChild><a href="/shop">Shop now</a></Button>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       <section onMouseMove={e => {
       const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
@@ -197,7 +174,6 @@ export default function Index() {
           <nav className="flex gap-5">
             <a href="#" className="hover:underline">Privacy</a>
             <a href="#" className="hover:underline">Terms</a>
-            <a href="/admin" className="hover:underline">Admin</a>
           </nav>
         </div>
       </footer>

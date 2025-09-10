@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
 import { useCart } from "@/contexts/CartContext";
+import { Header } from "@/components/Header";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -33,28 +34,7 @@ export default function Cart() {
         description="Review your selected items and proceed to checkout"
       />
       
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto flex items-center justify-between py-4">
-          <Button variant="ghost" onClick={handleContinueShopping}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Continue Shopping
-          </Button>
-          
-          <a href="/" className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/78d15118-e2f7-4ec1-92df-3aabde77ded8.png" 
-              alt="Lanisdeb Market" 
-              className="h-8 w-auto" 
-            />
-            <span className="font-semibold hidden sm:block">Lanisdeb Market</span>
-          </a>
-          
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="font-medium">{state.itemCount} items</span>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto py-8">
         <div className="mb-8">

@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SEO } from "@/components/SEO";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/Header";
 
 interface CheckoutForm {
   email: string;
@@ -119,23 +120,7 @@ export default function Checkout() {
           description="Complete your order"
         />
         
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto flex items-center justify-between py-4">
-            <Button variant="ghost" onClick={() => navigate('/cart')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Cart
-            </Button>
-            
-            <a href="/" className="flex items-center gap-3">
-              <img 
-                src="/lovable-uploads/78d15118-e2f7-4ec1-92df-3aabde77ded8.png" 
-                alt="Lanisdeb Market" 
-                className="h-8 w-auto" 
-              />
-              <span className="font-semibold hidden sm:block">Lanisdeb Market</span>
-            </a>
-          </div>
-        </header>
+        <Header />
 
         <main className="container mx-auto py-8 text-center">
           <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
@@ -155,23 +140,7 @@ export default function Checkout() {
         description="Complete your order"
       />
       
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex items-center justify-between py-4">
-          <Button variant="ghost" onClick={() => navigate('/cart')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Cart
-          </Button>
-          
-          <a href="/" className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/78d15118-e2f7-4ec1-92df-3aabde77ded8.png" 
-              alt="Lanisdeb Market" 
-              className="h-8 w-auto" 
-            />
-            <span className="font-semibold hidden sm:block">Lanisdeb Market</span>
-          </a>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto py-8">
         <div className="mb-8">

@@ -4,6 +4,7 @@ import { CheckCircle, ShoppingBag, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
+import { Header } from "@/components/Header";
 
 interface OrderData {
   orderNumber: string;
@@ -39,18 +40,7 @@ export default function OrderSuccess() {
         description="Your order has been successfully placed"
       />
       
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex items-center justify-center py-4">
-          <a href="/" className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/78d15118-e2f7-4ec1-92df-3aabde77ded8.png" 
-              alt="Lanisdeb Market" 
-              className="h-8 w-auto" 
-            />
-            <span className="font-semibold">Lanisdeb Market</span>
-          </a>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto py-12">
         <div className="max-w-2xl mx-auto text-center">
