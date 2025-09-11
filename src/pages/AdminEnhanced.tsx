@@ -52,10 +52,12 @@ export default function AdminEnhanced() {
     name: "",
     sku: "",
     price: "",
+    packPrice: "",
     description: "",
     stock_quantity: "",
     category_id: ""
   });
+  const [showPackPricing, setShowPackPricing] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -268,10 +270,12 @@ export default function AdminEnhanced() {
         name: "",
         sku: "",
         price: "",
+        packPrice: "",
         description: "",
         stock_quantity: "",
         category_id: categories[0]?.id || ""
       });
+      setShowPackPricing(false);
       setUploadedImages([]);
 
       fetchData();
@@ -504,11 +508,10 @@ export default function AdminEnhanced() {
         </div>
 
         <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="add-product">Add Product</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
-            <TabsTrigger value="bulk-upload">Bulk Upload</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products" className="space-y-4">
@@ -662,14 +665,37 @@ export default function AdminEnhanced() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Price (USD) *</label>
                     <Input
-                      type="text"
-                      placeholder="e.g., 1.99, $5 for 3, Pack of 10 - $12.99"
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g., 1.99"
                       value={productForm.price}
                       onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Enter numeric price (e.g., 1.99) or flexible pricing text (e.g., "Pack of 5 - $8.99", "$2 each or 3 for $5")
-                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowPackPricing(!showPackPricing)}
+                      >
+                        {showPackPricing ? "Hide" : "Add"} Pack Pricing
+                      </Button>
+                    </div>
+                    {showPackPricing && (
+                      <div className="mt-2">
+                        <label className="text-sm font-medium">Pack/Bulk Price</label>
+                        <Input
+                          type="text"
+                          placeholder="e.g., Pack of 5 - $8.99, 3 for $5"
+                          value={productForm.packPrice}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, packPrice: e.target.value }))}
+                          className="mt-1"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Enter flexible pricing text for bulk purchases
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Stock Quantity</label>
@@ -814,58 +840,6 @@ export default function AdminEnhanced() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="bulk-upload">
-            <Card>
-              <CardHeader>
-                <CardTitle>Bulk Image Upload</CardTitle>
-                <CardDescription>Upload multiple product images at once</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleImageUpload(e.target.files)}
-                    disabled={loading}
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Select multiple images to upload to your product gallery
-                  </p>
-                </div>
-
-                {uploadedImages.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-                    {uploadedImages.map((url, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={url}
-                          alt={`Bulk upload ${index + 1}`}
-                          className="aspect-square object-cover rounded-md border"
-                        />
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-1 right-1 h-6 w-6 p-0"
-                          onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== index))}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <Alert>
-                  <Upload className="h-4 w-4" />
-                  <AlertDescription>
-                    Images are uploaded to Supabase Storage and can be used when creating products.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </main>
     </div>
