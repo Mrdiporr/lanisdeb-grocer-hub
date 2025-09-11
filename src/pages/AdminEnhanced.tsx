@@ -589,23 +589,35 @@ export default function AdminEnhanced() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-1 sm:gap-2">
                             <Button
                               variant="outline"
                               size="sm"
+                              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
                               onClick={() => toggleProductStatus(product.id, product.is_active)}
                             >
-                              {product.is_active ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                              {product.is_active ? <XCircle className="h-3 w-3 sm:h-4 sm:w-4" /> : <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />}
+                              <span className="sr-only sm:not-sr-only sm:ml-2">
+                                {product.is_active ? 'Deactivate' : 'Activate'}
+                              </span>
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => startEditProduct(product)}>
-                              <Edit className="h-4 w-4" />
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
+                              onClick={() => startEditProduct(product)}
+                            >
+                              <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="sr-only sm:not-sr-only sm:ml-2">Edit</span>
                             </Button>
                             <Button 
                               variant="destructive" 
                               size="sm"
+                              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
                               onClick={() => deleteProduct(product.id)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="sr-only sm:not-sr-only sm:ml-2">Delete</span>
                             </Button>
                           </div>
                         </div>
@@ -644,12 +656,14 @@ export default function AdminEnhanced() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Price (USD) *</label>
                     <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="e.g., 1.99"
+                      type="text"
+                      placeholder="e.g., 1.99, $5 for 3, Pack of 10 - $12.99"
                       value={productForm.price}
                       onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Enter numeric price (e.g., 1.99) or flexible pricing text (e.g., "Pack of 5 - $8.99", "$2 each or 3 for $5")
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Stock Quantity</label>
