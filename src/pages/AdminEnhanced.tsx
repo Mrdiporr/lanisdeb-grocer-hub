@@ -237,10 +237,19 @@ export default function AdminEnhanced() {
 
     try {
       setLoading(true);
+      // Try to parse price as number, if it fails, store as string for flexible pricing
+      let priceValue;
+      const numericPrice = parseFloat(productForm.price);
+      if (!isNaN(numericPrice) && productForm.price.trim() === numericPrice.toString()) {
+        priceValue = numericPrice;
+      } else {
+        priceValue = productForm.price; // Store as string for flexible pricing
+      }
+
       const productData = {
         name: productForm.name,
         sku: productForm.sku || null,
-        price: parseFloat(productForm.price),
+        price: priceValue,
         description: productForm.description || null,
         category_id: productForm.category_id,
         stock_quantity: productForm.stock_quantity ? parseInt(productForm.stock_quantity) : null,
@@ -565,60 +574,57 @@ export default function AdminEnhanced() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            {product.image_url && (
-                              <img 
-                                src={product.image_url} 
-                                alt={product.name}
-                                className="w-16 h-16 object-cover rounded-md"
-                              />
-                            )}
-                            <div>
-                              <h3 className="font-medium">{product.name}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                ${product.price.toFixed(2)} • {product.category?.name}
-                              </p>
-                              <div className="flex gap-2 mt-1">
-                                <Badge variant={product.is_active ? "default" : "secondary"}>
-                                  {product.is_active ? "Active" : "Inactive"}
-                                </Badge>
-                                {product.stock_quantity === 0 && (
-                                  <Badge variant="destructive">Out of Stock</Badge>
-                                )}
+                        <div className="flex items-start gap-4">
+                          {product.image_url && (
+                            <img 
+                              src={product.image_url} 
+                              alt={product.name}
+                              className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium">{product.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : product.price} • {product.category?.name}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-2 mt-2">
+                              <Badge variant={product.is_active ? "default" : "secondary"}>
+                                {product.is_active ? "Active" : "Inactive"}
+                              </Badge>
+                              {product.stock_quantity === 0 && (
+                                <Badge variant="destructive">Out of Stock</Badge>
+                              )}
+                              {/* Action buttons positioned with active badge */}
+                              <div className="flex gap-1 ml-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 hover:bg-accent/50"
+                                  onClick={() => toggleProductStatus(product.id, product.is_active)}
+                                  title={product.is_active ? 'Deactivate' : 'Activate'}
+                                >
+                                  {product.is_active ? <XCircle className="h-3 w-3" /> : <CheckCircle className="h-3 w-3" />}
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="h-6 w-6 p-0 hover:bg-accent/50"
+                                  onClick={() => startEditProduct(product)}
+                                  title="Edit"
+                                >
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                  onClick={() => deleteProduct(product.id)}
+                                  title="Delete"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
                               </div>
                             </div>
-                          </div>
-                          <div className="flex gap-1 sm:gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
-                              onClick={() => toggleProductStatus(product.id, product.is_active)}
-                            >
-                              {product.is_active ? <XCircle className="h-3 w-3 sm:h-4 sm:w-4" /> : <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />}
-                              <span className="sr-only sm:not-sr-only sm:ml-2">
-                                {product.is_active ? 'Deactivate' : 'Activate'}
-                              </span>
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
-                              onClick={() => startEditProduct(product)}
-                            >
-                              <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                              <span className="sr-only sm:not-sr-only sm:ml-2">Edit</span>
-                            </Button>
-                            <Button 
-                              variant="destructive" 
-                              size="sm"
-                              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
-                              onClick={() => deleteProduct(product.id)}
-                            >
-                              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                              <span className="sr-only sm:not-sr-only sm:ml-2">Delete</span>
-                            </Button>
                           </div>
                         </div>
                       )}
